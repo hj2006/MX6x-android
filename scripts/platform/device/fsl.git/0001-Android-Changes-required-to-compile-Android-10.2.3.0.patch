@@ -1,20 +1,19 @@
-From 46169c5395e1ea51ee27b5647d8debc0e5ccccb6 Mon Sep 17 00:00:00 2001
-From: Mohit Singh <pal.mohit.singh@gmail.com>
-Date: Fri, 27 Mar 2020 12:00:59 -0700
-Subject: [PATCH] imx8mm_var_som: Changes required to compile Android 10 for
+From 343a643cbb0534d3cbd8fd3a37d2f4f1bdc98b30 Mon Sep 17 00:00:00 2001
+From: Mohit Singh <mohit.p@variscite.com>
+Date: Thu, 27 Aug 2020 17:16:06 -0700
+Subject: [PATCH] Android: Changes required to compile Android 10.2.3.0 for
  device/variscite.
 
 ---
- common/build/Makefile            | 9 ++++++---
- common/imx_path/ImxPathConfig.mk | 2 ++
- common/tools/imx-make.sh         | 4 ++--
- 3 files changed, 10 insertions(+), 5 deletions(-)
+ common/build/Makefile    | 7 ++++---
+ common/tools/imx-make.sh | 5 +++--
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/common/build/Makefile b/common/build/Makefile
-index 5cf9b6b2..7142865e 100644
+index 0e21be26..4b76366e 100644
 --- a/common/build/Makefile
 +++ b/common/build/Makefile
-@@ -23,13 +23,16 @@ HOST_PREBUILT_TAG := $(HOST_OS)-${HOST_PREBUILT_ARCH}
+@@ -23,13 +23,14 @@ HOST_PREBUILT_TAG := $(HOST_OS)-${HOST_PREBUILT_ARCH}
  
  # firstly to include UbootKernelCommonConfig.mk, then SharedBoardConfig.mk, finally UbootKernelBoardConfig.mk
  
@@ -27,31 +26,16 @@ index 5cf9b6b2..7142865e 100644
  
 -include ${fsl_git_path}/common/build/kernel.mk
 -include ${fsl_git_path}/common/build/uboot.mk
-+-include ${fsl_git_path}/../fsl/common/build/kernel.mk
-+-include ${fsl_git_path}/../fsl/common/build/uboot.mk
 +include ${fsl_git_path}/../fsl/common/build/kernel.mk
 +include ${fsl_git_path}/../fsl/common/build/uboot.mk
  -include ${product_path}/AndroidUboot.mk
  -include ${product_path}/AndroidTee.mk
- 
-diff --git a/common/imx_path/ImxPathConfig.mk b/common/imx_path/ImxPathConfig.mk
-index e0693010..0d3a4adf 100644
---- a/common/imx_path/ImxPathConfig.mk
-+++ b/common/imx_path/ImxPathConfig.mk
-@@ -21,6 +21,8 @@ IMX_SECURITY_PATH := vendor/nxp-private/security
- 
- KERNEL_IMX_PATH := vendor/nxp-opensource
- UBOOT_IMX_PATH := vendor/nxp-opensource
-+#KERNEL_IMX_PATH := vendor/variscite
-+#UBOOT_IMX_PATH := vendor/variscite
- IMX_LIB_PATH := vendor/nxp-opensource
- IMX_MKIMAGE_PATH := vendor/nxp-opensource
- IMX_PATH := vendor/nxp-opensource
+ -include ${GPU_VIV6_PATH}/gpu-viv6/driver/hal/kernel/galcore.mk
 diff --git a/common/tools/imx-make.sh b/common/tools/imx-make.sh
-index ebd8a2e1..47fe9f9b 100755
+index ad778ab5..e816fd55 100755
 --- a/common/tools/imx-make.sh
 +++ b/common/tools/imx-make.sh
-@@ -103,7 +103,7 @@ if [ ${build_bootloader_kernel_flag} -eq 0 ] && [ ${build_android_flag} -eq 0 ];
+@@ -108,10 +108,11 @@ if [ ${build_bootloader_kernel_flag} -eq 0 ] && [ ${build_android_flag} -eq 0 ];
      build_android_flag=1
  fi
  
@@ -60,13 +44,17 @@ index ebd8a2e1..47fe9f9b 100755
  product_path=${product_makefile%/*}
  soc_path=${product_path%/*}
  fsl_git_path=${soc_path%/*}
-@@ -115,7 +115,7 @@ fi
++export AARCH64_GCC_CROSS_COMPILE=$ANDROID_BUILD_TOP/prebuilts/gcc/linux-x86/aarch64/gcc-arm-8.3-2019.03-x86_64-aarch64-linux-gnu/bin/aarch64-linux-gnu-
+ 
+ # if uboot is to be compiled, remove the UBOOT_COLLECTION directory
+ if [ -n "${build_bootloader}" ]; then
+@@ -144,7 +145,7 @@ apply_patch
  
  # redirect standard input to /dev/null to avoid manually input in kernel configuration stage
  soc_path=${soc_path} product_path=${product_path} fsl_git_path=${fsl_git_path} clean_build=${clean_build} \
 -    make -C ./ -f ${fsl_git_path}/common/build/Makefile ${parallel_option} \
-+    make -C ./ -f ${fsl_git_path}/../fsl/common/build/Makefile ${parallel_option}  \
-     ${build_bootloader} ${build_kernel} </dev/null || exit
++    make -C ./ -f ${fsl_git_path}/../fsl/common/build/Makefile ${parallel_option} \
+     ${build_bootloader} ${build_kernel} ${build_galcore} </dev/null || exit
  
  if [ ${build_android_flag} -eq 1 ]; then
 -- 
