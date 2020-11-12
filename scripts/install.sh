@@ -24,10 +24,10 @@ readonly G_CROSS_COMPILER_PATH=${ANDROID_DIR}/prebuilts/gcc/linux-x86/aarch64/gc
 readonly G_CROSS_COMPILER_ARCHIVE=gcc-arm-8.3-2019.03-x86_64-aarch64-linux-gnu.tar.xz
 readonly G_EXT_CROSS_COMPILER_LINK="ftp://customerv:Variscite1@ftp.variscite.com/VAR-SOM-MX8X/Software/Android/Android_iMX8_Q1000_230/gcc-arm-8.3-2019.03-x86_64-aarch64-linux-gnu.tar.xz"
 
-readonly BASE_BRANCH_NAME="base_q10.0.0_2.3.0"
+readonly BASE_BRANCH_NAME="base_q10.0.0_2.5.0"
 
 ## git variables get from base script!
-readonly _EXTPARAM_BRANCH="q10.0.0_2.3.0-ga-var01"
+readonly _EXTPARAM_BRANCH="q10.0.0_2.5.0-var01"
 
 ## dirs ##
 readonly VARISCITE_PATCHS_DIR="${SCRIPT_POINT}/platform"
@@ -122,28 +122,28 @@ git clone https://github.com/linux-can/can-utils.git ${VENDOR_BASE_DIR}/can-util
 cd ${VENDOR_BASE_DIR}/can-utils > /dev/null
 git checkout 791890542ac1ce99131f36435e72af5635afc2fa -b ${BASE_BRANCH_NAME}
 
-pr_info "###########################"
-pr_info "# Apply framework patches #"
-pr_info "###########################"
-cd ${VARISCITE_PATCHS_DIR} > /dev/null
-git_array=$(find * -type d | grep '.git')
-cd - > /dev/null
+#pr_info "###########################"
+#pr_info "# Apply framework patches #"
+#pr_info "###########################"
+#cd ${VARISCITE_PATCHS_DIR} > /dev/null
+#git_array=$(find * -type d | grep '.git')
+#cd - > /dev/null
 
-for _ddd in ${git_array}
-do
-	_git_p=$(echo ${_ddd} | sed 's/.git//g')
-	cd ${ANDROID_DIR}/${_git_p}/ > /dev/null
+#for _ddd in ${git_array}
+#do
+#	_git_p=$(echo ${_ddd} | sed 's/.git//g')
+#	cd ${ANDROID_DIR}/${_git_p}/ > /dev/null
 	
-	pr_info "Apply patches for this git: \"${_git_p}/\""
+#	pr_info "Apply patches for this git: \"${_git_p}/\""
 	
-	git checkout -b ${_EXTPARAM_BRANCH} || {
-		pr_warning "Branch ${_EXTPARAM_BRANCH} is present!"
-	};
+#	git checkout -b ${_EXTPARAM_BRANCH} || {
+#		pr_warning "Branch ${_EXTPARAM_BRANCH} is present!"
+#	};
 
-	git am ${VARISCITE_PATCHS_DIR}/${_ddd}/*
+#	git am ${VARISCITE_PATCHS_DIR}/${_ddd}/*
 
-	cd - > /dev/null
-done
+#	cd - > /dev/null
+#done
 
 pr_info "#######################"
 pr_info "# Copy shell utilites #"
