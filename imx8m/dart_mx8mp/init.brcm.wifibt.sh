@@ -4,12 +4,38 @@
 # /etc/wifi/variscite-wifi.conf #
 #################################
 
-WIFI_PWR_GPIO=8
-WIFI_EN_GPIO=66
-BT_BUF_GPIO=133
 #BT_EN_GPIO=68
 BT_EN_RFKILL=0
-WIFI_MMC_HOST=30b50000.mmc
+
+WIFI_PWR_GPIO=40
+WIFI_PWR_GPIO_SOM=51
+
+WIFI_EN_GPIO=39
+WIFI_EN_GPIO_SOM=40
+
+BT_BUF_GPIO=41
+BT_BUF_GPIO_SOM=4
+
+WIFI_MMC_HOST=30b40000.mmc
+WIFI_SDIO_ID_FILE=/sys/bus/mmc/devices/mmc0:0001/mmc0:0001:1/device
+WIFI_5G_SDIO_ID=0x4339
+
+# Return true if board is VAR-SOM-MX8M-PLUS
+board_is_var_som_mx8m_plus()
+{
+	grep -q VAR-SOM-MX8M-PLUS /sys/devices/soc0/machine
+}
+
+# Configure VAR-SOM-MX8M-PLUS WIFI/BT pins
+config_pins()
+{
+	if board_is_var_som_mx8m_plus; then
+		WIFI_PWR_GPIO=${WIFI_PWR_GPIO_SOM}
+		WIFI_EN_GPIO=${WIFI_EN_GPIO_SOM}
+		BT_BUF_GPIO=${BT_BUF_GPIO_SOM}
+		BT_EN_GPIO=${BT_EN_GPIO_SOM}
+	fi
+}
 
 ######################################
 # /etc/wifi/variscite-wifi-common.sh #
@@ -18,6 +44,8 @@ WIFI_MMC_HOST=30b50000.mmc
 # Setup WIFI control GPIOs
 wifi_pre_up()
 {
+	# Configure WIFI/BT pins
+	config_pins
 	if [ ! -d /sys/class/gpio/gpio${WIFI_PWR_GPIO} ]; then
 		echo ${WIFI_PWR_GPIO} > /sys/class/gpio/export
 		echo out > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/direction
@@ -42,6 +70,8 @@ wifi_pre_up()
 # Power up WIFI chip
 wifi_up()
 {
+	# Configure WIFI/BT pins
+	config_pins
 	# Unbind WIFI device from MMC controller
 	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
 		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
@@ -54,7 +84,7 @@ wifi_up()
 	# WLAN_EN up
 	echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
 
-	# BT_EN up
+	# BT_EN up via rfkill
 	#echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 	echo 1 > /sys/class/rfkill/rfkill${BT_EN_RFKILL}/state
 
@@ -76,19 +106,16 @@ wifi_up()
 	
 	# Load WIFI driver
 	modprobe -d /vendor/lib/modules brcmfmac p2pon=1
-
-	# Load Ethernet driver
-	modprobe -d /vendor/lib/modules fec
 }
 
 # Power down WIFI chip
 wifi_down()
 {
+	# Configure WIFI/BT pins
+	config_pins
+
 	# Unload WIFI driver
 	modprobe -d /vendor/lib/modules -r brcmfmac
-
-	# Unload Ethernet driver
-	modprobe -d /vendor/lib/modules -r fec
 
 	# Unbind WIFI device from MMC controller
 	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
@@ -129,26 +156,13 @@ wifi_is_available()
 # Return true if WIFI should not be started
 wifi_should_not_be_started()
 {
-	# Do not enable WIFI if it is already up
-	[ -d /sys/class/net/wlan0 ] && return 0
-
-	# Do not enable WIFI if booting from SD on DART-IMX8M
-	if grep -q mmcblk1 /proc/cmdline; then
-		modprobe -d /vendor/lib/modules fec
-		return 0
-	fi
-
 	# Do not start WIFI if it is not available
 	if ! wifi_is_available; then
-	        modprobe fec
-	        return 0
-	fi
-	
-	# Enable ethernet and exit if booting from eMMC without WIFI
-	if ! grep -q WIFI /sys/devices/soc0/machine; then
-		modprobe -d /vendor/lib/modules fec
 		return 0
 	fi
+
+	# Do not start WIFI if it is already started
+	[ -d /sys/class/net/wlan0 ] && return 0
 
 	return 1
 }
@@ -156,20 +170,8 @@ wifi_should_not_be_started()
 # Return true if WIFI should not be stopped
 wifi_should_not_be_stopped()
 {
-	# Do not stop WIFI if booting from SD on DART-IMX8M
-	if grep -q mmcblk1 /proc/cmdline; then
-		return 0
-	fi
-
-        # Do not stop WIFI if it is not available          
-        if ! wifi_is_available; then
-                modprobe fec                       
-                return 0                               
-        fi
-
-	# Do not stop WIFI if booting from eMMC without WIFI
-	if ! grep -q WIFI /sys/devices/soc0/machine; then
-		modprobe -d /vendor/lib/modules fec
+	# Do not stop WIFI if it is not available
+	if ! wifi_is_available; then
 		return 0
 	fi
 
