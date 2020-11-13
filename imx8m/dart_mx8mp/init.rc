@@ -5,8 +5,8 @@ on early-init
     # mount the debugfs
     mount debugfs none /sys/kernel/debug/ mode=0755
 
-#    start early_init_sh
-#    start init_brcm_wifibt_sh
+    start early_init_sh
+    start init_brcm_wifibt_sh
 
     # Mount binderfs
     mkdir /dev/binderfs
