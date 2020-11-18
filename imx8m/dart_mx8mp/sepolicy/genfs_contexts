@@ -13,6 +13,9 @@ genfscon sysfs /devices/platform/backlight/backlight/backlight u:object_r:sysfs_
 genfscon sysfs /devices/platform/soc@0/30800000.bus/30a30000.i2c/i2c-1/1-003d/extcon u:object_r:sysfs_extcon:s0
 genfscon sysfs /devices/platform/bt_rfkill/rfkill/rfkill0 u:object_r:sysfs_rfkill:s0
 
-#RTC
-genfscon sysfs /devices/platform/soc@0/soc@0:bus@30800000.bus/30a30000.i2c/i2c-1/1-0068/rtc u:object_r:sysfs_rtc:s0
+#RTC DART-IMX8MP
+genfscon sysfs /devices/platform/soc@0/30800000.bus/30a30000.i2c/i2c-1/1-0068/rtc u:object_r:sysfs_rtc:s0
 
+
+#RTC VAR-SOM-IMX8MP
+genfscon sysfs /devices/platform/soc@0/30800000.bus/30a50000.i2c/i2c-2/2-0068/rtc u:object_r:sysfs_rtc:s0
