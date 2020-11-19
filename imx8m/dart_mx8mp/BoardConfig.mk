@@ -114,11 +114,13 @@ BOARD_PREBUILT_DTBOIMAGE := out/target/product/dart_mx8mp/dtbo-imx8mp-var-dart.i
 ifeq ($(TARGET_USE_DYNAMIC_PARTITIONS),true)
     TARGET_BOARD_DTS_CONFIG := \
 	 imx8mp-var-dart:imx8mp-var-dart.dtb \
-	 imx8mp-var-som:imx8mp-var-som.dtb
+	 imx8mp-var-som:imx8mp-var-som.dtb \
+	 imx8mp-var-som-ov5640:imx8mp-var-som-ov5640.dtb
 else # no dynamic parition feature
     TARGET_BOARD_DTS_CONFIG := \
 	 imx8mp-var-dart:imx8mp-var-dart-no-dynamic_partition.dtb \
-	 imx8mp-var-som:imx8mp-var-som-no-dynamic_partition.dtb
+	 imx8mp-var-som:imx8mp-var-som-no-dynamic_partition.dtb \
+	 imx8mp-var-som-ov5640:imx8mp-var-som-ov5640-no-dynamic_partition.dtb
 endif
 
 BOARD_SEPOLICY_DIRS := \
