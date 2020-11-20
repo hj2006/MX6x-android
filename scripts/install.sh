@@ -5,7 +5,7 @@
 # This script must be run from the Android main directory.
 # variscite/install must be at ~/q1000_100_build
 #
-# Variscite DART-MX8M patches for Android 10.0.0 2.3.0
+# Variscite DART-MX8M patches for Android 10.0.0 2.5.0
 
 set -e
 #set -x
@@ -111,7 +111,7 @@ pr_info "#########################"
 pr_info "clone ${VENDOR_BASE_DIR}/bcm_4343w_fw"
 git clone https://github.com/varigit/bcm_4343w_fw.git ${VENDOR_BASE_DIR}/bcm_4343w_fw
 cd ${VENDOR_BASE_DIR}/bcm_4343w_fw
-git checkout 7080491e10b82661ca4a67237fdb361190775d2f -b ${BASE_BRANCH_NAME}
+git checkout 8081cd2bddb1569abe91eb50bd687a2066a33342 -b ${BASE_BRANCH_NAME}
 
 pr_info "###############################"
 pr_info "# Misc. external repositories #"
@@ -122,28 +122,28 @@ git clone https://github.com/linux-can/can-utils.git ${VENDOR_BASE_DIR}/can-util
 cd ${VENDOR_BASE_DIR}/can-utils > /dev/null
 git checkout 791890542ac1ce99131f36435e72af5635afc2fa -b ${BASE_BRANCH_NAME}
 
-#pr_info "###########################"
-#pr_info "# Apply framework patches #"
-#pr_info "###########################"
-#cd ${VARISCITE_PATCHS_DIR} > /dev/null
-#git_array=$(find * -type d | grep '.git')
-#cd - > /dev/null
+pr_info "###########################"
+pr_info "# Apply framework patches #"
+pr_info "###########################"
+cd ${VARISCITE_PATCHS_DIR} > /dev/null
+git_array=$(find * -type d | grep '.git')
+cd - > /dev/null
 
-#for _ddd in ${git_array}
-#do
-#	_git_p=$(echo ${_ddd} | sed 's/.git//g')
-#	cd ${ANDROID_DIR}/${_git_p}/ > /dev/null
+for _ddd in ${git_array}
+do
+	_git_p=$(echo ${_ddd} | sed 's/.git//g')
+	cd ${ANDROID_DIR}/${_git_p}/ > /dev/null
 	
-#	pr_info "Apply patches for this git: \"${_git_p}/\""
+	pr_info "Apply patches for this git: \"${_git_p}/\""
 	
-#	git checkout -b ${_EXTPARAM_BRANCH} || {
-#		pr_warning "Branch ${_EXTPARAM_BRANCH} is present!"
-#	};
+	git checkout -b ${_EXTPARAM_BRANCH} || {
+		pr_warning "Branch ${_EXTPARAM_BRANCH} is present!"
+	};
 
-#	git am ${VARISCITE_PATCHS_DIR}/${_ddd}/*
+	git am ${VARISCITE_PATCHS_DIR}/${_ddd}/*
 
-#	cd - > /dev/null
-#done
+	cd - > /dev/null
+done
 
 pr_info "#######################"
 pr_info "# Copy shell utilites #"
