@@ -20,15 +20,28 @@ PRODUCT_COPY_FILES += \
 
 BOARD_PREBUILT_DTBOIMAGE := out/target/product/som_mx8q/dtbo-imx8qm-var-som-lvds.img
 
+
+ifeq ($(TARGET_USE_DYNAMIC_PARTITIONS),true)
 TARGET_BOARD_DTS_CONFIG := \
-        imx8qm-var-som-dp:fsl-imx8qm-var-som-dp.dtb \
-        imx8qm-var-som-hdmi:fsl-imx8qm-var-som-hdmi.dtb \
-        imx8qm-var-som-lvds:fsl-imx8qm-var-som-lvds.dtb \
-        imx8qm-var-spear-dp:fsl-imx8qm-var-spear-dp.dtb \
-        imx8qm-var-spear-hdmi:fsl-imx8qm-var-spear-hdmi.dtb \
-        imx8qm-var-spear-lvds:fsl-imx8qm-var-spear-lvds.dtb
+        imx8qm-var-som-dp:imx8qm-var-som-dp.dtb \
+        imx8qm-var-som-hdmi:imx8qm-var-som-hdmi.dtb \
+        imx8qm-var-som-lvds:imx8qm-var-som-lvds.dtb \
+        imx8qm-var-spear-dp:imx8qm-var-spear-dp.dtb \
+        imx8qm-var-spear-hdmi:imx8qm-var-spear-hdmi.dtb \
+        imx8qm-var-spear-lvds:imx8qm-var-spear-lvds.dtb
+else
+#TARGET_BOARD_DTS_CONFIG := \
+#        imx8qm-var-som-dp:fsl-imx8qm-var-som-dp-no-dynamic_partition.dtb \
+#        imx8qm-var-som-hdmi:fsl-imx8qm-var-som-hdmi-no-dynamic_partition.dtb \
+#        imx8qm-var-som-lvds:fsl-imx8qm-var-som-lvds-no-dynamic_partition.dtb \
+#        imx8qm-var-spear-dp:fsl-imx8qm-var-spear-dp-no-dynamic_partition.dtb \
+#        imx8qm-var-spear-hdmi:fsl-imx8qm-var-spear-hdmi-no-dynamic_partition.dtb \
+#        imx8qm-var-spear-lvds:fsl-imx8qm-var-spear-lvds-no-dynamic_partition.dtb
+
+endif
 
 TARGET_BOOTLOADER_CONFIG := \
-        imx8qm:imx8qm_var_som_android_defconfig \
-        imx8qm-som-uuu:imx8qm_var_som_android_uuu_defconfig
+         imx8qm:imx8qm_var_som_android_defconfig
+#        imx8qm-som-uuu:imx8qm_var_som_android_uuu_defconfig
 
+#TARGET_KERNEL_DEFCONFIG := imx8_var_android_defconfig
