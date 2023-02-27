@@ -177,8 +177,6 @@ BOARD_VENDOR_RAMDISK_KERNEL_MODULES +=     \
     $(KERNEL_OUT)/drivers/gpu/imx/lcdifv3/imx-lcdifv3-core.ko \
     $(KERNEL_OUT)/drivers/gpu/drm/imx/sec_mipi_dsim-imx.ko \
     $(KERNEL_OUT)/drivers/gpu/drm/panel/panel-raydium-rm67191.ko \
-    $(KERNEL_OUT)/drivers/gpu/drm/drm_dp_aux_bus.ko \
-    $(KERNEL_OUT)/drivers/gpu/drm/panel/panel-simple.ko \
     $(KERNEL_OUT)/drivers/usb/dwc3/dwc3-imx8mp.ko \
     $(KERNEL_OUT)/drivers/usb/typec/mux/gpio-switch.ko \
     $(KERNEL_OUT)/drivers/power/supply/dummy_battery.ko \
@@ -208,6 +206,13 @@ BOARD_VENDOR_RAMDISK_KERNEL_MODULES +=     \
     $(TARGET_OUT_INTERMEDIATES)/VVCAM_OBJ/vvcam-video.ko \
     $(KERNEL_OUT)/net/wireless/cfg80211.ko \
     $(KERNEL_OUT)/net/mac80211/mac80211.ko \
+    $(KERNEL_OUT)/net/can/can.ko \
+    $(KERNEL_OUT)/net/can/can-raw.ko \
+    $(KERNEL_OUT)/net/can/can-bcm.ko \
+    $(KERNEL_OUT)/net/can/can-gw.ko \
+    $(KERNEL_OUT)/drivers/net/can/dev/can-dev.ko \
+    $(KERNEL_OUT)/drivers/net/can/flexcan.ko \
+    $(KERNEL_OUT)/drivers/net/can/spi/mcp251xfd/mcp251xfd.ko \
     $(KERNEL_OUT)/drivers/staging/media/imx/imx8-media-dev.ko
 endif
 

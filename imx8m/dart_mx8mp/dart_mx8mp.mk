@@ -54,6 +54,7 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 PRODUCT_PACKAGES += \
     android.hardware.power-service.imx
 
+TARGET_VENDOR_PROP := $(LOCAL_PATH)/product.prop
 
 # Thermal HAL
 PRODUCT_PACKAGES += \
@@ -78,6 +79,9 @@ PRODUCT_COPY_FILES += \
 
 # Enable this to support vendor boot and boot header v3, this would be a MUST for GKI
 TARGET_USE_VENDOR_BOOT ?= true
+
+# Allow LZ4 compression
+BOARD_RAMDISK_USE_LZ4 := true
 
 ifeq ($(IMX8MP_USES_GKI),true)
   BOARD_RAMDISK_USE_LZ4 := true
@@ -214,6 +218,12 @@ ifneq ($(AVB_BOOT_RBINDEX),)
 BOARD_AVB_BOOT_ROLLBACK_INDEX := $(AVB_BOOT_RBINDEX)
 else
 BOARD_AVB_BOOT_ROLLBACK_INDEX := 0
+endif
+
+ifneq ($(AVB_INIT_BOOT_RBINDEX),)
+BOARD_AVB_INIT_BOOT_ROLLBACK_INDEX := $(AVB_INIT_BOOT_RBINDEX)
+else
+BOARD_AVB_INIT_BOOT_ROLLBACK_INDEX := 0
 endif
 
 $(call  inherit-product-if-exists, vendor/nxp-private/security/nxp_security.mk)

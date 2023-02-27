@@ -291,17 +291,44 @@ on property:ro.boot.usb.debugging=1
 # setenv append_bootargs androidboot.powersave.usb=true
 on property:ro.boot.powersave.usb=true
     # enable platform/32f10100.usb runtime_pm
-    write /sys/devices/platform/soc@0/32f10100.usb/38100000.dwc3/power/control auto
+    write /sys/devices/platform/soc@0/32f10100.usb/38100000.usb/power/control auto
 
     #enable platform/32f10108.usb runtime_pm
-    write /sys/devices/platform/soc@0/32f10108.usb/38200000.dwc3/power/control auto
-    write /sys/devices/platform/soc@0/32f10108.usb/38200000.dwc3/xhci-hcd.0.auto/power/control auto
+    write /sys/devices/platform/soc@0/32f10108.usb/38200000.usb/power/control auto
+    write /sys/devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.0.auto/power/control auto
+    write /sys/devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.1.auto/power/control auto
+    write /sys/devices/platform/soc@0/32f10108.usb/38200000.usb/xhci-hcd.2.auto/power/control auto
 
 # setenv append_bootargs androidboot.lpa.enable=1
 on property:ro.boot.lpa.enable=1
     setprop vendor.audio.lpa.hold_second 20
     setprop vendor.audio.lpa.period_ms 500
     setprop vendor.audio.lpa.enable 1
+
+# setenv append_bootargs androidboot.powersave.lpa=true
+on property:ro.boot.lpa.enable=1 && property:ro.boot.powersave.lpa=true
+    write /sys/lpa_ctrl/lpa 1
+
+# default is for dual os08a20
+on property:ro.boot.camera.layout=""
+    mount overlay overlay /vendor/etc/configs/isp ro lowerdir=/vendor/vendor_overlay_sensor/os08a20/vendor/etc/configs/isp:/vendor/etc/configs/isp,override_creds=off
+
+# setenv append_bootargs androidboot.camera.layout=basler-ov5640
+on property:ro.boot.camera.layout=basler-ov5640
+    setprop ro.media.xml_variant.profiles _8mp-ispsensor-ov5640
+    mount overlay overlay /vendor/etc/configs/isp ro lowerdir=/vendor/vendor_overlay_sensor/basler/vendor/etc/configs/isp:/vendor/etc/configs/isp,override_creds=off
+
+# setenv append_bootargs androidboot.camera.layout=only-ov5640
+on property:ro.boot.camera.layout=only-ov5640
+    setprop ro.media.xml_variant.profiles _8mp-ov5640
+
+on property:ro.boot.camera.layout=os08a20-ov5640
+    setprop ro.media.xml_variant.profiles _8mp-ispsensor-ov5640
+    mount overlay overlay /vendor/etc/configs/isp ro lowerdir=/vendor/vendor_overlay_sensor/os08a20/vendor/etc/configs/isp:/vendor/etc/configs/isp,override_creds=off
+
+on property:ro.boot.camera.layout=dual-basler
+    mount overlay overlay /vendor/etc/configs/isp ro lowerdir=/vendor/vendor_overlay_sensor/basler/vendor/etc/configs/isp:/vendor/etc/configs/isp,override_creds=off
+
 service confirmationui_ta_load /vendor/bin/trusty_apploader /vendor/firmware/tee/confirmationui.app
     user root
     group root system
