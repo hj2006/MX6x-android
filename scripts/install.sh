@@ -21,8 +21,9 @@ readonly SCRIPT_START_DATE=$(date +%Y%m%d)
 readonly ANDROID_DIR="${SCRIPT_POINT}/../../.."
 readonly G_CROSS_COMPILER_PATH=${ANDROID_DIR}/prebuilts/gcc/linux-x86/aarch64/gcc-arm-8.3-2019.03-x86_64-aarch64-elf
 readonly G_CROSS_COMPILER_ARCHIVE=gcc-arm-8.3-2019.03-x86_64-aarch64-linux-gnu.tar.xz
-readonly G_VARISCITE_URL="https://variscite-public.nyc3.cdn.digitaloceanspaces.com"
-readonly G_EXT_CROSS_COMPILER_LINK="${G_VARISCITE_URL}/Android/Android_iMX8_Q1000_230/gcc-arm-8.3-2019.03-x86_64-aarch64-linux-gnu.tar.xz"
+readonly G_CROSS_COMPILER_SHA224SUM="941646905a8e91d0653c1919c3e7536b871631bc6470f8b4b06fe16d"
+readonly G_VARISCITE_URL="https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/8.3-2019.03/binrel/"
+readonly G_EXT_CROSS_COMPILER_LINK="${G_VARISCITE_URL}/${G_CROSS_COMPILER_ARCHIVE}"
 readonly C_LANG_LINK="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86"
 readonly C_LANG_DIR="/opt/prebuilt-android-clang-var-0fc0715d9392c/"
 
@@ -205,8 +206,15 @@ pr_info "#######################"
 	mkdir -p ${ANDROID_DIR}/prebuilts/gcc/linux-x86/aarch64/
 	cd ${ANDROID_DIR}/prebuilts/gcc/linux-x86/aarch64/
 	wget ${G_EXT_CROSS_COMPILER_LINK}
-	tar -xJf ${G_CROSS_COMPILER_ARCHIVE} \
-		-C .
+	uboottoolchainsha224sum=`sha224sum ${G_CROSS_COMPILER_ARCHIVE} | awk '{ print $1 }'`
+	if [[ ${uboottoolchainsha224sum} = ${G_CROSS_COMPILER_SHA224SUM} ]] ; then
+		tar -xJf ${G_CROSS_COMPILER_ARCHIVE} \
+			-C .
+	else
+		echo; red_bold_echo "Bad sha224sum for ${G_CROSS_COMPILER_ARCHIVE}"
+		rm -rf ${G_CROSS_COMPILER_ARCHIVE}
+		exit 1
+	fi
 };
 
 pr_info "#######################"
